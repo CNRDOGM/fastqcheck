@@ -10,7 +10,11 @@ the spec).
 
 Usage:
 $ fastqcheck lane1.fastq > lane1.fastq.fastqcheck
-$ gunzip -c lane1.fastq.gz | fastqcheck > lan1.fastq.gz.fastqcheck
+$ gunzip -c lane1.fastq.gz | fastqcheck > lane1.fastq.gz.fastqcheck
+
+Or using Docker:
+$ docker run --rm -it -v /home/ubuntu/data:/data sangerpathogens/fastqcheck fastqcheck lane1.fastq > lane1.fastq.fastqcheck
+
 
 The software is built and installed in the standard manner using configure and make.
 Installation instructions are in the INSTALL file.
