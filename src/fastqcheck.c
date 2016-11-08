@@ -51,6 +51,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "readseq.h"
+#include "../config.h"
 #define _A 0
 #define _C 1
 #define _G 2
@@ -58,6 +59,15 @@
 #define _N 4
 
 #define MAX_LENGTH 100000
+
+
+void print_usage(FILE* stream, int exit_code)
+{
+  fprintf (stream, "fastqcheck is a program that reads FASTQ files, generates statistics,\nand can be used as a validator.\n");
+  fprintf (stream, "Usage:  fastqcheck lane1.fastq\n");
+  fprintf (stream, "Version: %s\n", PACKAGE_VERSION);
+  exit (exit_code);
+}
 
 int main (int argc, char **argv)
 {
@@ -75,8 +85,12 @@ int main (int argc, char **argv)
     fil = stdin ;
   else if (!(fil = fopen (argv[1], "r")))
     { fprintf (stderr, "Failed to open fastq file %s\n", argv[1]) ;
-      exit (EXIT_FAILURE) ;
+      print_usage(stdout, EXIT_FAILURE);
     }
+  else 
+  {
+    print_usage(stdout, EXIT_SUCCESS);
+  }
 
   while ( (status=readFastq (fil, dna2indexConv, &seq, &qval, &id, &length))>0 )
     { ++nseq ; ++nlen[length] ;
@@ -85,7 +99,7 @@ int main (int argc, char **argv)
 	{ lengthMax = length ;
 	  if (length > MAX_LENGTH)
 	    { fprintf (stderr, "read %s length = %d longer than MAX_LENGTH = %d; edit and recompile with larger MAX_LENGTH\n", id, length, MAX_LENGTH) ;
-	      exit (EXIT_FAILURE) ;
+        print_usage(stdout, EXIT_FAILURE);
 	    }
 	}
       for (i = 0 ; i < length ; ++i)
@@ -98,10 +112,10 @@ int main (int argc, char **argv)
 
     if ( status<0 )
     {
-        exit (EXIT_FAILURE);
+      print_usage(stdout, EXIT_FAILURE);
     }
 
-  printf ("%d sequences, %ld total length", nseq, total) ;
+  printf ("%ld sequences, %llu total length", nseq, total) ;
   if (nseq)
     printf (", %.2f average, %d max", total/(float)nseq, lengthMax) ;
   printf ("\n") ;
@@ -139,3 +153,4 @@ int main (int argc, char **argv)
   exit(EXIT_SUCCESS);
 
 }
+

@@ -12,12 +12,8 @@ Usage:
 $ fastqcheck lane1.fastq > lane1.fastq.fastqcheck
 $ gunzip -c lane1.fastq.gz | fastqcheck > lan1.fastq.gz.fastqcheck
 
-
-Compilation:
-gcc -std=c99 readseq.c fastqcheck.c -o fastqcheck -lm
-
-Then simply include the resulting fastqcheck executable in your $PATH.
-
+The software is built and installed in the standard manner using configure and make.
+Installation instructions are in the INSTALL file.
 
 
 
