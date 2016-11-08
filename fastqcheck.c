@@ -4,7 +4,7 @@
  * Description: check and return basic stats for a fastq file
  * Exported functions:
  * HISTORY:
- * Last code change: Mon Sep 28 13:28:56 2009 (pd3)
+ * Last code change: Mon Nov 7 21:29:00 2016 (ap13)
  * Edited: Mon Jul 27 17:54:52 BST 2009 (dj3)
  * Created: Tue May  9 01:05:21 2006 (rd)
  *-------------------------------------------------------------------
@@ -16,6 +16,8 @@
  * Fixes from Petr Danecek (pd3@sanger.ac.uk): avoid overflow on 
  * total by changing it to an unsigned long int, plus fixes to avoid
  * gcc -Wall gripes.
+ * Altered by Andrew Page (ap13@sanger.ac.uk): Increased yield means 
+ * variables need to be bigger to avoid overflows.
  *
  * Dependencies:
  *      readseq.c readseq.h fastqcheck.c
@@ -24,7 +26,7 @@
  *      gcc -std=c99 readseq.c fastqcheck.c -o fastqcheck -lm
  *
  *-------------------------------------------------------------------
- * Copyright (c) 2006, 2009, 2010, 2013 Genome Research Limited.
+ * Copyright (c) 2006, 2009, 2010, 2013, 2016 Genome Research Limited.
  *
  * License:
  * This file is part of fastqcheck.
@@ -55,13 +57,13 @@
 #define _T 3
 #define _N 4
 
-#define MAX_LENGTH 10000
+#define MAX_LENGTH 100000
 
 int main (int argc, char **argv)
 {
   int i, j, length, lengthMax = 0, qMax = 0, status ;
-  int nseq = 0;
-  unsigned long int total = 0 ;
+  long nseq = 0;
+  unsigned long long total = 0 ;
   char *seq, *id ;
   unsigned char *qval ;
   FILE *fil ;
