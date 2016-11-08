@@ -77,8 +77,8 @@ int main (int argc, char **argv)
   char *seq, *id ;
   unsigned char *qval ;
   FILE *fil ;
-  static int sum[5], qsum[256] ;		/* 0 automatically */
-  static int psum[MAX_LENGTH][5], pqsum[MAX_LENGTH][256], nlen[MAX_LENGTH] ;
+  static long sum[5], qsum[256] ;		/* 0 automatically */
+  static long psum[MAX_LENGTH][5], pqsum[MAX_LENGTH][256], nlen[MAX_LENGTH] ;
   double erate;
 
   if (argc == 1)
