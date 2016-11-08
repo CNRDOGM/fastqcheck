@@ -1,0 +1,15 @@
+== Installing from a git checkout ==
+$ autoreconf -i -f
+$ ./configure
+$ su -
+$ make
+$ make install
+
+== Installing from a released source tarball ==
+
+$ tar xzvf fastqcheck-1.1.tar.gz
+$ cd fastqcheck-1.1
+$ ./configure
+$ make
+$ su -
+$ make install

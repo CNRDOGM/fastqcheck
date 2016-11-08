@@ -4,7 +4,7 @@
  * Description: check and return basic stats for a fastq file
  * Exported functions:
  * HISTORY:
- * Last code change: Mon Sep 28 13:28:56 2009 (pd3)
+ * Last code change: Mon Nov 7 21:29:00 2016 (ap13)
  * Edited: Mon Jul 27 17:54:52 BST 2009 (dj3)
  * Created: Tue May  9 01:05:21 2006 (rd)
  *-------------------------------------------------------------------
@@ -16,6 +16,8 @@
  * Fixes from Petr Danecek (pd3@sanger.ac.uk): avoid overflow on 
  * total by changing it to an unsigned long int, plus fixes to avoid
  * gcc -Wall gripes.
+ * Altered by Andrew Page (ap13@sanger.ac.uk): Increased yield means 
+ * variables need to be bigger to avoid overflows.
  *
  * Dependencies:
  *      readseq.c readseq.h fastqcheck.c
@@ -24,7 +26,7 @@
  *      gcc -std=c99 readseq.c fastqcheck.c -o fastqcheck -lm
  *
  *-------------------------------------------------------------------
- * Copyright (c) 2006, 2009, 2010, 2013 Genome Research Limited.
+ * Copyright (c) 2006, 2009, 2010, 2013, 2016 Genome Research Limited.
  *
  * License:
  * This file is part of fastqcheck.
@@ -49,19 +51,29 @@
 #include <stdio.h>
 #include <math.h>
 #include "readseq.h"
+#include "../config.h"
 #define _A 0
 #define _C 1
 #define _G 2
 #define _T 3
 #define _N 4
 
-#define MAX_LENGTH 10000
+#define MAX_LENGTH 100000
+
+
+void print_usage(FILE* stream, int exit_code)
+{
+  fprintf (stream, "fastqcheck is a program that reads FASTQ files, generates statistics,\nand can be used as a validator.\n");
+  fprintf (stream, "Usage:  fastqcheck lane1.fastq\n");
+  fprintf (stream, "Version: %s\n", PACKAGE_VERSION);
+  exit (exit_code);
+}
 
 int main (int argc, char **argv)
 {
   int i, j, length, lengthMax = 0, qMax = 0, status ;
-  int nseq = 0;
-  unsigned long int total = 0 ;
+  long nseq = 0;
+  unsigned long long total = 0 ;
   char *seq, *id ;
   unsigned char *qval ;
   FILE *fil ;
@@ -73,8 +85,12 @@ int main (int argc, char **argv)
     fil = stdin ;
   else if (!(fil = fopen (argv[1], "r")))
     { fprintf (stderr, "Failed to open fastq file %s\n", argv[1]) ;
-      exit (EXIT_FAILURE) ;
+      print_usage(stdout, EXIT_FAILURE);
     }
+  else 
+  {
+    print_usage(stdout, EXIT_SUCCESS);
+  }
 
   while ( (status=readFastq (fil, dna2indexConv, &seq, &qval, &id, &length))>0 )
     { ++nseq ; ++nlen[length] ;
@@ -83,7 +99,7 @@ int main (int argc, char **argv)
 	{ lengthMax = length ;
 	  if (length > MAX_LENGTH)
 	    { fprintf (stderr, "read %s length = %d longer than MAX_LENGTH = %d; edit and recompile with larger MAX_LENGTH\n", id, length, MAX_LENGTH) ;
-	      exit (EXIT_FAILURE) ;
+        print_usage(stdout, EXIT_FAILURE);
 	    }
 	}
       for (i = 0 ; i < length ; ++i)
@@ -96,10 +112,10 @@ int main (int argc, char **argv)
 
     if ( status<0 )
     {
-        exit (EXIT_FAILURE);
+      print_usage(stdout, EXIT_FAILURE);
     }
 
-  printf ("%d sequences, %ld total length", nseq, total) ;
+  printf ("%ld sequences, %llu total length", nseq, total) ;
   if (nseq)
     printf (", %.2f average, %d max", total/(float)nseq, lengthMax) ;
   printf ("\n") ;
@@ -137,3 +153,4 @@ int main (int argc, char **argv)
   exit(EXIT_SUCCESS);
 
 }
+
