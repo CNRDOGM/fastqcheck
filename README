@@ -15,6 +15,7 @@ $ gunzip -c lane1.fastq.gz | fastqcheck > lan1.fastq.gz.fastqcheck
 The software is built and installed in the standard manner using configure and make.
 Installation instructions are in the INSTALL file.
 
+[![Build Status](https://travis-ci.org/sanger-pathogens/fastqcheck.svg?branch=master)](https://travis-ci.org/sanger-pathogens/fastqcheck)
 
 
 COPYRIGHT & LICENSE
